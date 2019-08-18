@@ -1,0 +1,42 @@
+package lsieun.bytecode.f_opcode;
+
+import lsieun.bytecode.classfile.utils.AttributeUtils;
+import lsieun.bytecode.opcode.utils.InstructionChain;
+import lsieun.bytecode.opcode.visitors.OpcodeDumpVisitor;
+import lsieun.bytecode.opcode.visitors.OpcodeReadVisitor;
+import lsieun.utils.ClassReader;
+import lsieun.utils.radix.HexUtils;
+
+public class D_Bytes_Opcode {
+    public static void main(String[] args) {
+        // 第1步，获取code_bytes
+        byte[] code_bytes = AttributeUtils.findCodeAttribute(ClassReader.readMethod()).code;
+
+        // 第2步，由code_bytes构建InstructionList
+        OpcodeReadVisitor rv = new OpcodeReadVisitor(code_bytes);
+        InstructionChain chain = rv.getInstructionChain();
+
+        // 第3步，由InstructionList转换为bytes
+        OpcodeDumpVisitor dv = new OpcodeDumpVisitor();
+        dv.visitInstructionList(chain);
+        byte[] bytes = dv.getByteCode();
+
+        // 第4步，对比
+        System.out.println("\r\n=== === ===  === === ===  === === ===");
+        System.out.println("code_bytes vs bytes:");
+        System.out.println(HexUtils.fromBytes(code_bytes));
+        System.out.println(HexUtils.fromBytes(bytes));
+        System.out.println("\r\n=== === ===  === === ===  === === ===");
+
+        String format = "|%03d|: (%d)-(%d)";
+        for(int i=0; i<code_bytes.length; i++) {
+            byte b1 = code_bytes[i];
+            byte b2 = bytes[i];
+
+            if(b1 == b2) continue;
+
+            String line = String.format(format, i, b1, b2);
+            System.out.println(line);
+        }
+    }
+}
