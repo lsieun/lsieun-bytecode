@@ -11,9 +11,9 @@
 
     <modules>
         <module>bytecode-core</module>
+        <module>bytecode-cp</module>
         <module>bytecode-classfile</module>
         <module>bytecode-opcode</module>
-        <module>bytecode-cp</module>
         <module>bytecode-test</module>
     </modules>
 

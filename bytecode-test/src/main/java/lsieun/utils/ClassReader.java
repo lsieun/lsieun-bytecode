@@ -7,8 +7,8 @@ import lsieun.bytecode.classfile.clazz.ClassFile;
 import lsieun.bytecode.classfile.clazz.MethodInfo;
 import lsieun.bytecode.classfile.utils.AttributeUtils;
 import lsieun.bytecode.classfile.utils.MethodUtils;
+import lsieun.utils.archive.JarUtils;
 import lsieun.utils.io.FileUtils;
-import lsieun.utils.io.JarUtils;
 
 public class ClassReader {
     // region ClassFile
@@ -69,7 +69,7 @@ public class ClassReader {
             String jarPath = PropertyUtils.getProperty("bytecode.source.jar.path");
             String entryName = PropertyUtils.getProperty("bytecode.source.jar.entry.name");
             url = "jar:file:" + jarPath + "!/" + entryName;
-            bytes = JarUtils.readBytes(jarPath, entryName);
+            bytes = JarUtils.readClass(jarPath, entryName);
         } else if ("filepath".equalsIgnoreCase(type)) {
             String filepath = PropertyUtils.getProperty("bytecode.source.file.filepath");
             url = "file://" + filepath;

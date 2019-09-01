@@ -11,7 +11,7 @@ public class B_Standard_ClassFile {
         ByteDashboard byteDashboard = ClassReader.readBytes();
         ClassFile classFile = new ClassFile(byteDashboard);
 
-        System.out.println("\r\n");
+        System.out.println(System.lineSeparator());
         System.out.println("=== === ===  === === ===  === === ===");
         Visitor v = new ClassFileStandardVisitor();
         classFile.accept(v);
