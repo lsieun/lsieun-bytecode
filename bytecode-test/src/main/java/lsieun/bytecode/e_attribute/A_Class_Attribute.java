@@ -5,6 +5,7 @@ import lsieun.bytecode.classfile.clazz.ClassFile;
 import lsieun.bytecode.classfile.utils.AttributeUtils;
 import lsieun.bytecode.classfile.visitors.AttributeStandardVisitor;
 import lsieun.bytecode.cp.ConstantPool;
+import lsieun.bytecode.cp.utils.ConstantPoolUtils;
 import lsieun.bytecode.cp.visitor.CPStandardVisitor;
 import lsieun.utils.ClassReader;
 import lsieun.utils.PropertyUtils;
@@ -16,6 +17,7 @@ public class A_Class_Attribute {
         AttributeInfo attribute = AttributeUtils.findAttribute(classFile.attributes, attrName);
 
         ConstantPool constantPool = classFile.constantPool;
+        ConstantPoolUtils.simplify(constantPool);
         CPStandardVisitor cpV = new CPStandardVisitor();
         constantPool.accept(cpV);
 

@@ -2,6 +2,7 @@ package lsieun.bytecode.cp.visitor;
 
 import lsieun.bytecode.core.cst.CPConst;
 import lsieun.bytecode.cp.Constant;
+import lsieun.bytecode.cp.ConstantInvokeDynamic;
 import lsieun.bytecode.cp.ConstantPool;
 
 public class CPStandardVisitor extends AbstractVisitor {
@@ -27,6 +28,16 @@ public class CPStandardVisitor extends AbstractVisitor {
                 obj.index,
                 CPConst.getConstantName(obj.tag),
                 obj.value,
+                obj.getHexCode());
+        System.out.println(line);
+    }
+
+    @Override
+    public void visitConstantInvokeDynamic(ConstantInvokeDynamic obj) {
+        String line = String.format("    |%03d| %s {Value='%s', HexCode='%s'}",
+                obj.index,
+                CPConst.getConstantName(obj.tag),
+                "#" + obj.bootstrap_method_attr_index + ":" + obj.value,
                 obj.getHexCode());
         System.out.println(line);
     }

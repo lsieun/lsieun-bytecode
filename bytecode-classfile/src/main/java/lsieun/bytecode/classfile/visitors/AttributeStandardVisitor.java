@@ -1,14 +1,19 @@
 package lsieun.bytecode.classfile.visitors;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
+import lsieun.bytecode.classfile.attrs.AttributeInfo;
 import lsieun.bytecode.classfile.attrs.RuntimeInvisibleAnnotations;
 import lsieun.bytecode.classfile.attrs.RuntimeVisibleAnnotations;
 import lsieun.bytecode.classfile.attrs.Signature;
 import lsieun.bytecode.classfile.attrs.annotation.*;
 import lsieun.bytecode.classfile.attrs.classfile.*;
 import lsieun.bytecode.classfile.attrs.method.AnnotationDefault;
+import lsieun.bytecode.classfile.attrs.method.MethodParameter;
+import lsieun.bytecode.classfile.attrs.method.MethodParameters;
 import lsieun.bytecode.core.cst.AccessConst;
+import lsieun.bytecode.core.cst.CPConst;
 import lsieun.bytecode.cp.ConstantPool;
 import lsieun.bytecode.cp.utils.ConstantPoolUtils;
 import lsieun.utils.ByteDashboard;
@@ -85,6 +90,7 @@ public class AttributeStandardVisitor extends AbstractVisitor {
         System.out.println(String.format(format, "num_bootstrap_methods", HexUtils.fromBytes(bd.nextN(2)), obj.num_bootstrap_methods));
         if (obj.num_bootstrap_methods > 0) {
             for (int i=0; i<obj.num_bootstrap_methods; i++) {
+                System.out.println(String.format("|%03d|", (i+1)));
                 displayBootstrapMethod(obj.entries[i], bd);
             }
         }
@@ -241,5 +247,47 @@ public class AttributeStandardVisitor extends AbstractVisitor {
         System.out.println(String.format(format, "attribute_length", HexUtils.fromBytes(bd.nextN(4)), attribute_length));
         System.out.println(String.format(format, "sourcefile_index", HexUtils.fromBytes(bd.nextN(2)), obj.sourcefile_index));
 
+    }
+
+
+    @Override
+    public void visitMethodParameters(MethodParameters obj) {
+        int parameters_count = obj.parameters_count;
+        MethodParameter[] parameters = obj.parameters;
+
+        visitStandAttribute(obj, (bd) -> {
+            String format = "%s='%s' (%s)";
+            System.out.println(String.format(format, "parameters_count", HexUtils.fromBytes(bd.nextN(1)), parameters_count));
+            System.out.println("Name                           Flags");
+
+            String format2 = "%-30s %s";
+            for (int i=0; i<parameters_count;i++) {
+                MethodParameter param = parameters[i];
+                int name_index = param.name_index;
+                int access_flags = param.access_flags;
+
+                String name = constant_pool.getConstantString(name_index, CPConst.CONSTANT_Utf8);
+                System.out.println(String.format(format2, HexUtils.fromBytes(bd.nextN(2)) + "(" + name_index + ":" + name + ")", HexUtils.fromBytes(bd.nextN(2)) + "(" + access_flags + ")"));
+            }
+        });
+    }
+
+    public void visitStandAttribute(AttributeInfo obj, Consumer<ByteDashboard> consumer) {
+        String hexCode = obj.getHexCode();
+
+        byte[] bytes = obj.getBytes();
+        ByteDashboard bd = new ByteDashboard(bytes);
+        int attribute_name_index = obj.getAttributeNameIndex();
+        int attribute_length = obj.getAttributeLength();
+
+        String attribute_name = constant_pool.getConstantString(attribute_name_index, CPConst.CONSTANT_Utf8);
+
+        System.out.println(String.format("%s%s:", System.lineSeparator(), attribute_name));
+        System.out.println("HexCode: " + hexCode);
+        String format = "%s='%s' (%s)";
+        System.out.println(String.format(format, "attribute_name_index", HexUtils.fromBytes(bd.nextN(2)), attribute_name_index));
+        System.out.println(String.format(format, "attribute_length", HexUtils.fromBytes(bd.nextN(4)), attribute_length));
+
+        consumer.accept(bd);
     }
 }

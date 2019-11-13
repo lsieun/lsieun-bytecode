@@ -8,6 +8,8 @@ import lsieun.bytecode.classfile.attrs.code.LocalVariableType;
 import lsieun.bytecode.classfile.attrs.code.LocalVariableTypeTable;
 import lsieun.bytecode.classfile.attrs.method.Code;
 import lsieun.bytecode.classfile.attrs.method.ExceptionTable;
+import lsieun.bytecode.classfile.attrs.method.MethodParameter;
+import lsieun.bytecode.classfile.attrs.method.MethodParameters;
 import lsieun.bytecode.classfile.clazz.Attributes;
 import lsieun.bytecode.classfile.clazz.ClassFile;
 import lsieun.bytecode.classfile.clazz.MethodInfo;
@@ -48,6 +50,10 @@ public class MethodCodeVisitor extends AbstractVisitor {
         System.out.println(String.format("Method %s:%s", name, descriptor));
 
         Code code = AttributeUtils.findCodeAttribute(obj);
+        if (code == null) {
+            System.out.println("NO CODE");
+            return;
+        }
         code.accept(this);
     }
 
@@ -60,7 +66,8 @@ public class MethodCodeVisitor extends AbstractVisitor {
         ExceptionTable[] exception_table_array = obj.exception_table_array;
         Attributes attributes = obj.attributes;
 
-        System.out.println("\r\n=== === ===  === === ===  === === ===");
+        System.out.println(System.lineSeparator());
+        System.out.println("=== === ===  === === ===  === === ===");
         String format = "%s = %s";
         System.out.println(String.format(format, "max_stack", max_stack));
         System.out.println(String.format(format, "max_locals", max_locals));

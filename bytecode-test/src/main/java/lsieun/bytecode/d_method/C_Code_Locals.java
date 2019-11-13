@@ -10,7 +10,8 @@ public class C_Code_Locals {
         ClassFile classFile = ClassReader.readClassFile();
         String name_and_type = PropertyUtils.getProperty("bytecode.content.method.signature");
 
-        System.out.println("\r\n=== === ===  === === ===  === === ===");
+        System.out.println(System.lineSeparator());
+        System.out.println("=== === ===  === === ===  === === ===");
         MethodCodeVisitor v = new MethodCodeVisitor(name_and_type);
         v.visitClassFile(classFile);
     }
