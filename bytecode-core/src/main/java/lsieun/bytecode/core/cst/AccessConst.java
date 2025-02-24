@@ -174,7 +174,7 @@ public class AccessConst {
     }
 
     public static String getMethodParameterAccessFlagsString(int accessFlags) {
-        List<String> list = new ArrayList();
+        List<String> list = new ArrayList<>();
         if(BitUtils.hasBit(accessFlags, 5)) {
             list.add("ACC_FINAL");
         }

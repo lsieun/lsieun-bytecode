@@ -89,7 +89,7 @@ public class ClassReader {
             throw new RuntimeException("bytes is null!!!");
         }
 
-        System.out.printf("Class File Path: %s\r\n", url);
+        System.out.printf("Class File Path: %s%n", url);
         ByteDashboard byteDashboard = new ByteDashboard(bytes);
         return byteDashboard;
     }

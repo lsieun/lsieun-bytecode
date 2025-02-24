@@ -1,13 +1,13 @@
 package lsieun.sample;
 
-import java.util.Arrays;
-import java.util.Locale;
+import java.util.function.Function;
 
-class HelloWorld {
-    public void m() {
-        int a = 1;
-        int b = 2;
-        int c = a + b;
+public class HelloWorld {
+    public static void main(String[] args) {
+        Function<Integer, Integer> func = (i) -> i + 5;
+        Integer value = func.apply(10);
+        System.out.println(value);
     }
 }
+
 

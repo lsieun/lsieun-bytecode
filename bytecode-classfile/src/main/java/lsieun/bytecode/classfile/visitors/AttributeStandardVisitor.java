@@ -1,8 +1,5 @@
 package lsieun.bytecode.classfile.visitors;
 
-import java.util.Arrays;
-import java.util.function.Consumer;
-
 import lsieun.bytecode.classfile.attrs.AttributeInfo;
 import lsieun.bytecode.classfile.attrs.RuntimeInvisibleAnnotations;
 import lsieun.bytecode.classfile.attrs.RuntimeVisibleAnnotations;
@@ -18,6 +15,9 @@ import lsieun.bytecode.cp.ConstantPool;
 import lsieun.bytecode.cp.utils.ConstantPoolUtils;
 import lsieun.utils.ByteDashboard;
 import lsieun.utils.radix.HexUtils;
+
+import java.util.Formatter;
+import java.util.function.Consumer;
 
 @SuppressWarnings("Duplicates")
 public class AttributeStandardVisitor extends AbstractVisitor {
@@ -90,17 +90,31 @@ public class AttributeStandardVisitor extends AbstractVisitor {
         System.out.println(String.format(format, "num_bootstrap_methods", HexUtils.fromBytes(bd.nextN(2)), obj.num_bootstrap_methods));
         if (obj.num_bootstrap_methods > 0) {
             for (int i=0; i<obj.num_bootstrap_methods; i++) {
-                System.out.println(String.format("|%03d|", (i+1)));
-                displayBootstrapMethod(obj.entries[i], bd);
+                BootstrapMethod entry = obj.entries[i];
+                int bootstrap_method_ref = entry.bootstrap_method_ref;
+                int num_bootstrap_arguments = entry.num_bootstrap_arguments;
+                int[] bootstrap_arguments = entry.bootstrap_arguments;
+                String bootstrap_arguments_str = array2str(bootstrap_arguments);
+                System.out.println(String.format("|%03d|", (i + 1)));
+                System.out.println(String.format(format, "bootstrap_method_ref", HexUtils.toHex(bd.nextN(2)), bootstrap_method_ref));
+                System.out.println(String.format(format, "num_bootstrap_arguments", HexUtils.toHex(bd.nextN(2)), num_bootstrap_arguments));
+                System.out.println(String.format(format, "bootstrap_arguments", HexUtils.toHex(bd.nextN(2 * num_bootstrap_arguments)), bootstrap_arguments_str));
             }
         }
     }
 
-    private void displayBootstrapMethod(BootstrapMethod bootstrapMethod, ByteDashboard bd) {
-        String format = "%s='%s' (%s)";
-        System.out.println(String.format(format, "bootstrap_method_ref", HexUtils.fromBytes(bd.nextN(2)), bootstrapMethod.bootstrap_method_ref));
-        System.out.println(String.format(format, "num_bootstrap_arguments", HexUtils.fromBytes(bd.nextN(2)), bootstrapMethod.num_bootstrap_arguments));
-        System.out.println(String.format(format, "bootstrap_arguments", HexUtils.fromBytes(bd.nextN(2)), Arrays.toString(bootstrapMethod.bootstrap_arguments)));
+    public static String array2str(int[] array) {
+        int length = array.length;
+        StringBuilder sb = new StringBuilder();
+        Formatter fm = new Formatter(sb);
+        fm.format("[");
+        for (int i = 0; i < length - 1; i++) {
+            int item = array[i];
+            fm.format("#%s,", item);
+        }
+        fm.format("#%s", array[length - 1]);
+        fm.format("]");
+        return sb.toString();
     }
 
     @Override
@@ -117,12 +131,12 @@ public class AttributeStandardVisitor extends AbstractVisitor {
         String format = "%s='%s' (%s)";
         System.out.println(String.format(format, "attribute_name_index", HexUtils.fromBytes(bd.nextN(2)), attribute_name_index));
         System.out.println(String.format(format, "attribute_length", HexUtils.fromBytes(bd.nextN(4)), attribute_length));
-        System.out.println(String.format(format, "class_index", HexUtils.fromBytes(bd.nextN(2)), constant_pool.getConstant(obj.class_index).value));
+        System.out.println(String.format(format, "class_index", HexUtils.fromBytes(bd.nextN(2)), obj.class_index));
         String method_name = "";
         if (obj.method_index != 0) {
             method_name = constant_pool.getConstant(obj.method_index).value;
         }
-        System.out.println(String.format(format, "method_index", HexUtils.fromBytes(bd.nextN(2)), method_name));
+        System.out.println(String.format(format, "method_index", HexUtils.fromBytes(bd.nextN(2)), obj.method_index));
     }
 
     @Override
@@ -144,7 +158,8 @@ public class AttributeStandardVisitor extends AbstractVisitor {
         if (obj.number_of_classes > 0) {
             for (int i = 0; i < obj.number_of_classes; i++) {
                 InnerClass entry = obj.entries[i];
-                System.out.println(String.format("%s===>%03d", System.lineSeparator(), (i + 1)));
+                System.out.println(System.lineSeparator());
+                System.out.println(String.format("|%03d|", (i + 1)));
                 System.out.println(String.format(format, "inner_class_info_index", HexUtils.fromBytes(bd.nextN(2)), entry.inner_class_info_index));
                 System.out.println(String.format(format, "outer_class_info_index", HexUtils.fromBytes(bd.nextN(2)), entry.outer_class_info_index));
                 System.out.println(String.format(format, "inner_name_index", HexUtils.fromBytes(bd.nextN(2)), entry.inner_name_index));

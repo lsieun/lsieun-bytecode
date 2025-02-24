@@ -13,5 +13,4 @@ public enum DaysOfTheWeek {
         return (day == SATURDAY || day == SUNDAY);
     }
 
-
 }

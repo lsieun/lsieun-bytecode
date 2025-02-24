@@ -39,7 +39,7 @@ public class AttributeUtils {
     public static String getAttributeNames(Attributes attributes) {
         AttributeInfo[] entries = attributes.getEntries();
 
-        List<String> attr_list = new ArrayList();
+        List<String> attr_list = new ArrayList<>();
         for(int i=0; i<entries.length; i++) {
             AttributeInfo item = entries[i];
             String name = item.getName();

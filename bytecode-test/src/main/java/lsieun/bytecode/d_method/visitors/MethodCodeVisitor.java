@@ -135,7 +135,7 @@ public class MethodCodeVisitor extends AbstractVisitor {
     public void visitLocalVariableTypeTable(LocalVariableTypeTable obj) {
         LocalVariableType[] entries = obj.getEntries();
         Arrays.sort(entries);
-        System.out.println("\r\nLocalVariableTypeTable:");
+        System.out.println("LocalVariableTypeTable:");
         String title = "index  start_pc  length  name_and_type";
         System.out.println(title);
         String format = "%5d  %8d  %6d  %s:%s";
